@@ -1,0 +1,20 @@
+services:
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jenkins
+    user: root
+    ports:
+      - "8080:8080"     # Jenkins web UI
+      - "50000:50000"   # Jenkins agent port (not used here, but standard to expose)
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      # Mount the HOST's Docker socket so Jenkins can run docker/docker-compose
+      # commands that build & run containers on the host - without needing
+      # Docker installed on the host's shell/PATH at all.
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+volumes:
+  jenkins_home:
