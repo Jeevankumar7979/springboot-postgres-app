@@ -171,3 +171,4 @@ inside any container, which is why the Smoke Test stage uses it.
 - Postgres and the app are **not** part of the `jenkins-docker/docker-compose.yml`
   — they're started separately by the pipeline's Deploy stage, using the
   top-level `docker-compose.yml`.
+- 
