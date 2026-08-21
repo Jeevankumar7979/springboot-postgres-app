@@ -1,0 +1,15 @@
+# On Docker Desktop's built-in Kubernetes, a LoadBalancer Service's external IP
+# resolves to "localhost" automatically - no MetalLB or cloud provider needed.
+# So after this is applied, the app is reachable at http://localhost:9090
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-app
+  namespace: demo-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: demo-app
+  ports:
+    - port: 9090
+      targetPort: 8080
