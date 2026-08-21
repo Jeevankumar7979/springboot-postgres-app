@@ -9,6 +9,14 @@ pipeline {
     }
 
     environment {
+        // Homebrew-installed Jenkins (brew services) does NOT inherit your
+        // interactive shell's PATH, so mvn/docker aren't found unless we add them here.
+        // Confirmed via `which mvn` / `which docker` on this Intel Mac -> /usr/local/bin
+        PATH              = "/usr/local/bin:${env.PATH}"
+        // Force JDK 17 (matches pom.xml <java.version>17</java.version>) instead of
+        // whatever newer JDK Homebrew may have set as default.
+        JAVA_HOME         = "/usr/local/opt/openjdk@17"
+
         IMAGE_NAME        = "gannepakajeevankumar/demo-app"
         IMAGE_TAG         = "${env.BUILD_NUMBER}"
         DOCKERHUB_CREDS   = credentials('dockerhub-credentials')   // Jenkins credential ID
@@ -22,6 +30,16 @@ pipeline {
     }
 
     stages {
+
+        stage('Debug Environment') {
+            steps {
+                sh 'echo "PATH is: $PATH"'
+                sh 'echo "JAVA_HOME is: $JAVA_HOME"'
+                sh 'which mvn || echo "mvn not found"'
+                sh 'which docker || echo "docker not found"'
+                sh 'which java || echo "java not found"'
+            }
+        }
 
         stage('Checkout') {
             steps {
@@ -86,7 +104,7 @@ pipeline {
             steps {
                 sh '''
                     sleep 15
-                    curl -f http://localhost:9090/actuator/health || (echo "Health check failed" && exit 1)
+                    curl -f http://localhost:8080/actuator/health || (echo "Health check failed" && exit 1)
                 '''
             }
         }
