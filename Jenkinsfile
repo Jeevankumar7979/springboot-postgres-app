@@ -8,20 +8,14 @@ pipeline {
         githubPush()
     }
 
-    environment {
-        // Homebrew-installed Jenkins (brew services) does NOT inherit your
-        // interactive shell's PATH, so mvn/docker aren't found unless we add them here.
-        // Confirmed via `which mvn` / `which docker` on this Intel Mac -> /usr/local/bin
-        PATH              = "/usr/local/bin:${env.PATH}"
-        // Force JDK 17 (matches pom.xml <java.version>17</java.version>) instead of
-        // whatever newer JDK Homebrew may have set as default.
-        JAVA_HOME         = "/usr/local/opt/openjdk@17"
-
-        IMAGE_NAME        = "gannepakajeevankumar/demo-app"
-        IMAGE_TAG         = "${env.BUILD_NUMBER}"
-        DOCKERHUB_CREDS   = credentials('dockerhub-credentials')   // Jenkins credential ID
-        COMPOSE_PROJECT   = "demo"
-    }
+   environment {
+       PATH              = "/usr/local/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home/bin:/usr/local/bin:${env.PATH}"
+       JAVA_HOME         = "/usr/local/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
+       IMAGE_NAME        = "gannepakajeevankumar/demo-app"
+       IMAGE_TAG         = "${env.BUILD_NUMBER}"
+       DOCKERHUB_CREDS   = credentials('dockerhub-credentials')
+       COMPOSE_PROJECT   = "demo"
+   }
 
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
