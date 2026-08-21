@@ -119,4 +119,4 @@ If any stage fails, the pipeline stops and marks the build red — nothing broke
 ## 6. Notes
 - The database is **PostgreSQL only** — no H2 or in-memory DB is used anywhere, including tests (the sample test is a lightweight placeholder so `mvn test` doesn't need a live DB in the build stage; wire up Testcontainers-Postgres if you want full integration tests).
 - `spring.jpa.hibernate.ddl-auto=update` auto-creates the `employees` table on first run — fine for demos; use Flyway/Liquibase migrations for production.
-- Jenkins agent running the pipeline needs Docker + Maven (or the `maven:3.9.9-eclipse-temurin-21` image via a Docker agent) available on the host.
+- Jenkins agent running the pipeline needs Docker + Maven (or the `maven:3.9-eclipse-temurin-17` image via a Docker agent) available on the host.
