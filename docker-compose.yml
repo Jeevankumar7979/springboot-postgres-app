@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: demo-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: demodb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d demodb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - demo-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: demo-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: demodb
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      SERVER_PORT: 9090
+    ports:
+      - "9090:9090"
+    networks:
+      - demo-network
+
+networks:
+  demo-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
